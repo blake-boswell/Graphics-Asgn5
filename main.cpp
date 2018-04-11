@@ -166,44 +166,124 @@ class Sphere3D
 //----------------------------------------------
 int main()
 {
-   cout << "\nTest point class\n";
-   Point3D p1;
-   p1.set(1,2,3);
-   cout << "p1 = ";
-   p1.print();
-   cout << endl;
-   Point3D p2;
-   p2.set(3,4,5);
-   cout << "p2 = ";
-   p2.print();
-   cout << endl;
+    cout << "\nTest point class\n";
+    Point3D p1;
+    p1.set(1,2,3);
+    cout << "p1 = ";
+    p1.print();
+    cout << endl;
+    Point3D p2;
+    p2.set(3,4,5);
+    cout << "p2 = ";
+    p2.print();
+    cout << endl;
+    Point3D p3;
+    p3.set(4,2,6);
+    cout << "p3 = ";
+    p3.print();
+    cout << endl;
+    cout << "The distance btwn p1 and p2 is " << p1.distance(p2) << "\t\t(should be 3.464)" << endl;
+    cout << "The distance btwn p2 and p3 is " << p2.distance(p3) << "\t\t(should be 2.449)" << endl;
+    cout << "The distance btwn p1 and p3 is " << p1.distance(p3) << "\t\t(should be 4.2426)" << endl;
 
-   cout << "\nTest vector class\n";
-   Vector3D v;
-   v.set(2,1,0);
-   cout << "v = ";
-   v.print();
-   cout << endl;
+    cout << "\nTest vector class\n";
+    Vector3D v;
+    v.set(2,1,0);
+    cout << "v = ";
+    v.print();
+    cout << endl;
+    v.normalize();
+    cout << "Normalized v = ";
+    v.print();
+    cout << endl;
+    cout << "Proof: Magnitude should be 1. Magnitude of v: " << v.magnitude() << endl;
+    Vector3D v1;
+    v1.set(2,4,3);
+    cout << "v1 = ";
+    v1.print();
+    cout << endl;
+    Vector3D v2;
+    v2.set(5,3,9);
+    cout << "v2 = ";
+    v2.print();
+    cout << endl;
+    cout << "v1 dot v2: " << v1.dot(v2) << "\t\t(should be 49)" << endl;
 
-   cout << "\nTest ray class\n";
-   Ray3D r1;
-   r1.set(p1, v);
-   cout << "r1 = ";
-   r1.print();
-   cout << endl;
-   Ray3D r2;
-   r2.set(p1, p2);
-   cout << "r2 = ";
-   r2.print();
-   cout << endl;
+    cout << "\nTest ray class\n";
+    Ray3D r1;
+    r1.set(p1, v);
+    cout << "r1 = ";
+    r1.print();
+    cout << endl;
+    Ray3D r2;
+    r2.set(p1, p2);
+    cout << "r2 = ";
+    r2.print();
+    cout << endl;
+    Ray3D ray;
+    ray.set(p1, v1);
+    cout << "ray = ";
+    ray.print();
+    cout << endl;
+    cout << "ray get_sample test\n";
+    cout << "(should be from 1,2,3 all the way to 3, 5, 6 increasing linearly)" << endl;
+    const int numSamples = 10;
+    for(int i = 0; i <= numSamples; i++) {
+        ray.get_sample((float)i/numSamples).print();
+        cout << endl;
+    }
 
-   cout << "\nTest sphere class\n";
-   Sphere3D s;
-   s.set(p1, 2);
-   cout << "s = ";
-   s.print();
-   cout << endl;
+    cout << "\nTest sphere class\n";
+    Sphere3D s;
+    s.set(p1, 2);
+    cout << "s = ";
+    s.print();
+    cout << endl;
+    r1.set(p1,v2);
+    cout << "r1 = ";
+    r1.print();
+    cout << endl;
+    cout << "r2 = ";
+    r2.print();
+    cout << endl;
+    ray.set(p2,v1);
+    cout << "ray = ";
+    ray.print();
+    cout << endl;
+        
+    cout << "\nTest get_intersection\n";
+    Point3D point;
+    Vector3D normal;
 
-   // TO BE ADDED
-   return 0;
+    if(s.get_intersection(r1, point, normal)) {
+        cout << "r1 has an intersection at ";
+        point.print();
+        cout << ". The spheres normal is ";
+        normal.print();
+        cout << endl;
+    } else {
+        cout << "r1 does not intersect s" << endl;
+    }
+
+    if(s.get_intersection(r2, point, normal)) {
+        cout << "r2 has an intersection at ";
+        point.print();
+        cout << ". The spheres normal is ";
+        normal.print();
+        cout << endl;
+    } else {
+        cout << "r2 does not intersect s" << endl;
+    }
+
+    if(s.get_intersection(ray, point, normal)) {
+        cout << "ray has an intersection at ";
+        point.print();
+        cout << ". The spheres normal is ";
+        normal.print();
+        cout << endl;
+    } else {
+        cout << "ray does not intersect s" << endl;
+    }
+    // TO BE ADDED
+    return 0;
 }
