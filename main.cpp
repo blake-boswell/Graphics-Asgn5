@@ -108,6 +108,7 @@ class Ray3D
 
     // TO BE ADDED
     Point3D get_sample(float t) {
+        cout << "get_sample with value t = " << t << endl;
         Point3D location;
         float locationX = this->point.px + (t * this->dir.vx);
         float locationY = this->point.px + (t * this->dir.vy);
@@ -132,24 +133,42 @@ class Sphere3D
 
     // TO BE ADDED
     bool get_intersection(Ray3D ray, Point3D &point, Vector3D &normal) {
-        // Get distance from ray origin to center of sphere
-        float length = ray.point.distance(center);
-        // Use the direction of the ray dotted with the magnitude of L to get the ray vector that intersects (if it does)
-        float rayPointToCenter = length * ray.dir.vx + length * ray.dir.vy + length * ray.dir.vz;
-        if(rayPointToCenter < 0) {
-            // ray doesn't intersect with the circle
+        // Get distance from ray origin to center of sphere and call this vector L
+        Vector3D L;
+        L.vx = this->center.px - ray.point.px;
+        L.vy = this->center.py - ray.point.py;
+        L.vz = this->center.pz - ray.point.pz;
+
+        // t center-adjacent
+        float tca = L.dot(ray.dir);
+
+        if(tca < 0.0) {
+            // The ray cannot intersect with the circle
             return false;
         }
 
-        float d = sqrt((length * length) - (rayPointToCenter * rayPointToCenter));
+        float d = sqrt(L.dot(L) - tca * tca);
+        if(L.dot(L) - tca * tca < 0) {
+            cout << "d cannot be the sqrt of a negative number" << endl;
+            return false;
+        }
+
         if(d > this->radius) {
             // ray doesn't intersect with the circle
             return false;
         }
-        float lengthFromIntersectToCenter = sqrt((this->radius * this->radius) - (d * d));
-        float lengthFromRayPointToIntersect = rayPointToCenter - lengthFromIntersectToCenter;
+        // t hypotenuse-center
+        float thc = sqrt((this->radius * this->radius) - (d * d));
+        float t = tca - thc;
 
-        point = ray.get_sample(lengthFromRayPointToIntersect);
+        cout << "tca:\t\t" << tca << endl;
+        cout << "d:\t\t" << d << endl;
+        cout << "thc:\t\t" << thc << endl;
+        cout << "t:\t\t" << t << endl;
+        cout << "LdotL:\t\t" << L.dot(L) << endl;
+        cout << "tca^2:\t\t" << tca * tca << endl;
+
+        point = ray.get_sample(t);
 
         // Calculate normal
         normal.vx = point.px - this->center.px;
@@ -250,6 +269,15 @@ int main()
     cout << "ray = ";
     ray.print();
     cout << endl;
+    Ray3D r3;
+    Point3D p4;
+    p4.set(-3,-2,-5);
+    Vector3D v4;
+    v4.set(1,1,2);
+    r3.set(p4, v4);
+    cout << "r3 = ";
+    r3.print();
+    cout << endl;
         
     cout << "\nTest get_intersection\n";
     Point3D point;
@@ -283,6 +311,16 @@ int main()
         cout << endl;
     } else {
         cout << "ray does not intersect s" << endl;
+    }
+
+    if(s.get_intersection(r3, point, normal)) {
+        cout << "r3 has an intersection at ";
+        point.print();
+        cout << ". The spheres normal is ";
+        normal.print();
+        cout << endl;
+    } else {
+        cout << "r3 does not intersect s" << endl;
     }
     // TO BE ADDED
     return 0;
