@@ -33,6 +33,14 @@ class Point3D
         float deltaZSquared = ((this->pz - p.pz) * (this->pz - p.pz));
         return sqrt(deltaXSquared + deltaYSquared + deltaZSquared);
     }
+
+    Point3D operator-(const Point3D& p) {
+        Point3D point;
+        point.px = this->px - p.px;
+        point.py = this->py - p.py;
+        point.pz = this->pz - p.pz;
+        return point;
+    }
 };
 
 //----------------------------------------------
@@ -60,10 +68,26 @@ class Vector3D
         return sqrt(squareSum);
     }
 
-      float dot(Vector3D v) {
+    float dot(Vector3D v) {
         float dotResult = (this->vx * v.vx) + (this->vy * v.vy) + (this->vz * v.vz);
         return dotResult;
-      }
+    }
+
+    Vector3D operator*(const Vector3D& v) {
+        Vector3D vector;
+        vector.vx = this->vx * v.vx;
+        vector.vy = this->vy * v.vy;
+        vector.vz = this->vz * v.vz;
+        return vector;
+    }
+
+    Vector3D operator*(const int& n) {
+        Vector3D vector;
+        vector.vx = this->vx * n;
+        vector.vy = this->vy * n;
+        vector.vz = this->vz * n;
+        return vector;
+    }
 };
 
 //----------------------------------------------
@@ -107,7 +131,35 @@ class Sphere3D
         { center.print(); cout << " " << radius; }
 
     // TO BE ADDED
-    bool get_intersection(Ray3D ray, Point3D &point, Vector3D &normal);
+    bool get_intersection(Ray3D ray, Point3D &point, Vector3D &normal) {
+        // Get distance from ray origin to center of sphere
+        float length = ray.point.distance(center);
+        // Use the direction of the ray dotted with the magnitude of L to get the ray vector that intersects (if it does)
+        float rayPointToCenter = length * ray.dir.vx + length * ray.dir.vy + length * ray.dir.vz;
+        if(rayPointToCenter < 0) {
+            // ray doesn't intersect with the circle
+            return false;
+        }
+
+        float d = sqrt((length * length) - (rayPointToCenter * rayPointToCenter));
+        if(d > this->radius) {
+            // ray doesn't intersect with the circle
+            return false;
+        }
+        float lengthFromIntersectToCenter = sqrt((this->radius * this->radius) - (d * d));
+        float lengthFromRayPointToIntersect = rayPointToCenter - lengthFromIntersectToCenter;
+
+        point = ray.get_sample(lengthFromRayPointToIntersect);
+
+        // Calculate normal
+        normal.vx = point.px - this->center.px;
+        normal.vy = point.py - this->center.py;
+        normal.vz = point.pz - this->center.pz;
+        normal.normalize();
+        return true;
+
+
+    }
 };
 
 
