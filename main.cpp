@@ -28,7 +28,10 @@ class Point3D
 
     // TO BE ADDED
     float distance(Point3D p) {
-        // Calculate Euclidian distance between 2 3D points
+        float deltaXSquared = ((this->px - p.px) * (this->px - p.px));
+        float deltaYSquared = ((this->py - p.py) * (this->py - p.py));
+        float deltaZSquared = ((this->pz - p.pz) * (this->pz - p.pz));
+        return sqrt(deltaXSquared + deltaYSquared + deltaZSquared);
     }
 };
 
