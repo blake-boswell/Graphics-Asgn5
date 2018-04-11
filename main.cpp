@@ -83,7 +83,14 @@ class Ray3D
         { point.print(); cout << " "; dir.print(); }
 
     // TO BE ADDED
-    Point3D get_sample(float t);
+    Point3D get_sample(float t) {
+        Point3D location;
+        float locationX = this->point.px + (t * this->dir.vx);
+        float locationY = this->point.px + (t * this->dir.vy);
+        float locationZ = this->point.pz + (t * this->dir.vz);
+        location.set(locationX, locationY, locationZ);
+        return location;
+    }
 };
 
 //----------------------------------------------
