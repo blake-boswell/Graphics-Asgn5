@@ -33,14 +33,6 @@ class Point3D
         float deltaZSquared = ((this->pz - p.pz) * (this->pz - p.pz));
         return sqrt(deltaXSquared + deltaYSquared + deltaZSquared);
     }
-
-    Point3D operator-(const Point3D& p) {
-        Point3D point;
-        point.px = this->px - p.px;
-        point.py = this->py - p.py;
-        point.pz = this->pz - p.pz;
-        return point;
-    }
 };
 
 //----------------------------------------------
@@ -77,22 +69,6 @@ class Vector3D
         float dotResult = (this->vx * p.px) + (this->vy * p.py) + (this->vz * p.pz);
         return dotResult;
     }
-
-    Vector3D operator*(const Vector3D& v) {
-        Vector3D vector;
-        vector.vx = this->vx * v.vx;
-        vector.vy = this->vy * v.vy;
-        vector.vz = this->vz * v.vz;
-        return vector;
-    }
-
-    Vector3D operator*(const int& n) {
-        Vector3D vector;
-        vector.vx = this->vx * n;
-        vector.vy = this->vy * n;
-        vector.vz = this->vz * n;
-        return vector;
-    }
 };
 
 //----------------------------------------------
@@ -113,7 +89,6 @@ class Ray3D
 
     // TO BE ADDED
     Point3D get_sample(float t) {
-        //cout << "get_sample with value t = " << t << endl;
         Point3D location;
         this->dir.normalize();
         float locationX = this->point.px + (t * this->dir.vx);
@@ -194,6 +169,22 @@ class Sphere3D
     }
 };
 
+void testRaySphereIntersection(Ray3D ray, Sphere3D sphere) {
+    Point3D point;
+    Vector3D normal;
+    cout << "\nray =\t\t";
+    ray.print();
+    cout << endl;
+    if(sphere.get_intersection(ray, point, normal)) {
+        cout << "point =\t\t";
+        point.print();
+        cout << "\nnormal =\t";
+        normal.print();
+        cout << endl;
+    } else {
+        cout << "The ray does not intersect the sphere" << endl;
+    }
+}
 
 //----------------------------------------------
 int main()
@@ -214,9 +205,9 @@ int main()
     cout << "p3 = ";
     p3.print();
     cout << endl;
-    cout << "The distance btwn p1 and p2 is " << p1.distance(p2) << "\t\t(should be 3.464)" << endl;
-    cout << "The distance btwn p2 and p3 is " << p2.distance(p3) << "\t\t(should be 2.449)" << endl;
-    cout << "The distance btwn p1 and p3 is " << p1.distance(p3) << "\t\t(should be 4.2426)" << endl;
+    cout << "The distance btwn p1 and p2 is " << p1.distance(p2) << "\t\t(should be ~3.464)" << endl;
+    cout << "The distance btwn p2 and p3 is " << p2.distance(p3) << "\t\t(should be ~2.449)" << endl;
+    cout << "The distance btwn p1 and p3 is " << p1.distance(p3) << "\t\t(should be ~4.2426)" << endl;
 
     cout << "\nTest vector class\n";
     Vector3D v;
@@ -228,7 +219,7 @@ int main()
     cout << "Normalized v = ";
     v.print();
     cout << endl;
-    cout << "Proof: Magnitude should be 1. Magnitude of v: " << v.magnitude() << endl;
+    cout << "\tProof: Magnitude should be 1. Magnitude of v: " << v.magnitude() << endl;
     Vector3D v1;
     v1.set(2,4,3);
     cout << "v1 = ";
@@ -258,7 +249,6 @@ int main()
     ray.print();
     cout << endl;
     cout << "ray get_sample test\n";
-    cout << "(should be from 1,2,3 all the way to 3, 5, 6 increasing linearly)" << endl;
     const int numSamples = 10;
     for(int i = 0; i <= numSamples; i++) {
         r1.get_sample((float)i/numSamples).print();
@@ -297,100 +287,12 @@ int main()
     ray7.set(point7, vector1);
         
     cout << "\nTest get_intersection\n";
-    Point3D point;
-    Vector3D normal;
-
-    cout << "ray1 = ";
-    ray1.print();
-    cout << endl;
-    if(s.get_intersection(ray1, point, normal)) {
-        cout << "point = ";
-        point.print();
-        cout << "\nnormal = ";
-        normal.print();
-        cout << endl;
-    } else {
-        cout << "ray1 does not intersect s" << endl;
-    }
-
-    cout << "ray2 = ";
-    ray2.print();
-    cout << endl;
-    if(s.get_intersection(ray2, point, normal)) {
-        cout << "point = ";
-        point.print();
-        cout << "\nnormal = ";
-        normal.print();
-        cout << endl;
-    } else {
-        cout << "ray2 does not intersect s" << endl;
-    }
-
-    cout << "ray3 = ";
-    ray3.print();
-    cout << endl;
-    if(s.get_intersection(ray3, point, normal)) {
-        cout << "point = ";
-        point.print();
-        cout << "\nnormal = ";
-        normal.print();
-        cout << endl;
-    } else {
-        cout << "ray3 does not intersect s" << endl;
-    }
-
-    cout << "ray4 = ";
-    ray4.print();
-    cout << endl;
-    if(s.get_intersection(ray4, point, normal)) {
-        cout << "point = ";
-        point.print();
-        cout << "\nnormal = ";
-        normal.print();
-        cout << endl;
-    } else {
-        cout << "ray4 does not intersect s" << endl;
-    }
-
-    cout << "ray5 = ";
-    ray5.print();
-    cout << endl;
-    if(s.get_intersection(ray5, point, normal)) {
-        cout << "point = ";
-        point.print();
-        cout << "\nnormal = ";
-        normal.print();
-        cout << endl;
-    } else {
-        cout << "ray5 does not intersect s" << endl;
-    }
-
-    cout << "ray6 = ";
-    ray6.print();
-    cout << endl;
-    if(s.get_intersection(ray6, point, normal)) {
-        cout << "point = ";
-        point.print();
-        cout << "\nnormal = ";
-        normal.print();
-        cout << endl;
-    } else {
-        cout << "ray6 does not intersect s" << endl;
-    }
-
-    cout << "ray7 = ";
-    ray7.print();
-    cout << endl;
-    if(s.get_intersection(ray7, point, normal)) {
-        cout << "point = ";
-        point.print();
-        cout << "\nnormal = ";
-        normal.print();
-        cout << endl;
-    } else {
-        cout << "ray7 does not intersect s" << endl;
-    }
-
-    // TO BE ADDED
+    testRaySphereIntersection(ray1, s);
+    testRaySphereIntersection(ray2, s);
+    testRaySphereIntersection(ray3, s);
+    testRaySphereIntersection(ray4, s);
+    testRaySphereIntersection(ray5, s);
+    testRaySphereIntersection(ray6, s);
+    testRaySphereIntersection(ray7, s);
     return 0;
 }
